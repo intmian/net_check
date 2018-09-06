@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "net_check", "net_check\net_check.pyproj", "{FB601360-5D20-4989-ABFB-37DF36A0D854}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB601360-5D20-4989-ABFB-37DF36A0D854}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB601360-5D20-4989-ABFB-37DF36A0D854}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF82B303-C48B-4BF8-AD3F-A31D2E2CFA11}
+	EndGlobalSection
+EndGlobal
