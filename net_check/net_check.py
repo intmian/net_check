@@ -136,9 +136,9 @@ def test_website_simple(url,mode):
     except(pycurl.error):
          return "∞ ms"
     http_total_time = c.getinfo(pycurl.TOTAL_TIME)
-    http_total_time = round(http_total_time,1)
+    http_total_time = round(http_total_time*1000,1)
     http_code = c.getinfo(pycurl.HTTP_CODE)
-    return  str(http_total_time * 1000)+" ms"
+    return  str(http_total_time)+" ms"
     #print("%s \n    直连\n    响应时间： %.2f ms\n    响应状态： %d[%s]" % (url, http_total_time * 1000,int(http_code), dict_code[http_code]))
 
 
