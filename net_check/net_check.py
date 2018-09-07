@@ -197,9 +197,14 @@ if __name__ == '__main__':
         con_proxy = test_website_withThread("https://www.baidu.com",1)
         print("代理墙内延迟",con_proxy)
         con_google = test_website_withThread("https://www.google.com",0)
-        print("直连墙外延迟",con_google)
+        print("直连墙外已ban延迟",con_google)
         con_google_withProxy = test_website_withThread("https://www.google.com",1)
-        print("代理墙外延迟",con_google_withProxy)
+        print("代理墙外已ban延迟",con_google_withProxy)
+        con_google = test_website_withThread("https://www.wikipedia.org/",0)
+        print("直连墙外未ban延迟",con_google)
+        con_google_withProxy = test_website_withThread("https://www.wikipedia.org/",1)
+        print("代理墙外未ban延迟",con_google_withProxy)
+
         print("常用网站：")
         for url in test_urls:
             print(url,":")
