@@ -4,8 +4,11 @@ import certifi
 import threading
 from io import BytesIO
 import os
+import threading
 def clear():os.system('cls')
+import time
 
+threads_information = []
 dict_code = {100: "Continue",
              101: "Switching Protocols",
              102: "Processing",
@@ -69,7 +72,6 @@ test_urls = ["https://www.baidu.com",
              "https://github.com",
              "https://www.youku.com",
              "https://store.steampowered.com/",
-             "api.warframe.com",
              "https://www.google.com",
              "https://www.youtube.com"]
 
@@ -134,18 +136,49 @@ def test_website_simple(url,mode):
     try:
         c.perform()  # 执行
     except(pycurl.error):
-         return "∞ ms"
+         return -1  # 代表不能连接
     http_total_time = c.getinfo(pycurl.TOTAL_TIME)
     http_total_time = round(http_total_time*1000,1)
     http_code = c.getinfo(pycurl.HTTP_CODE)
-    return  str(http_total_time)+" ms"
+    return  http_total_time # ms
     #print("%s \n    直连\n    响应时间： %.2f ms\n    响应状态： %d[%s]" % (url, http_total_time * 1000,int(http_code), dict_code[http_code]))
 
+# return ∞ ms or n ms 
+
+def test_website_simple_start(url,mode):
+    time_ = test_website_simple(url,mode)
+    threads_information.append(time_)
+
+def test_website_withThread(url,mode):
+    total_time = 0
+    success_time = 0  # 成功响应
+    fail_time = 0
+    threads_information.clear()
+    t = threading.Thread(target=test_website_simple_start,args=(url,mode))
+    t.start()
+    t = threading.Thread(target=test_website_simple_start,args=(url,mode))
+    t.start()
+    t = threading.Thread(target=test_website_simple_start,args=(url,mode))
+    t.start()
+    while len(threads_information) < 3:
+        time.sleep(0.1)  # 减少系统资源占用
+        pass
+    for time_ in threads_information:
+        if time_ == -1:
+            fail_time += 1
+        else:
+            success_time +=1 
+            total_time += time_
+    if success_time >= 2:
+        return str(round(total_time/success_time,1))+" ms"
+    elif success_time < 2:
+        return "∞ ms"
+        
 
 if __name__ == '__main__':
     mode = int(input("输入1进入常用测试，输入2进入特殊测试:_\b"))
     if mode == 2:
-        url = input("输入网址:___________________\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b")
+        url = input("输入网址:___________________\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b")
         clear()
         try:
             print("正在尝试直连")
@@ -159,19 +192,19 @@ if __name__ == '__main__':
                 print("连接失败")
     if mode == 1:
         clear()
-        con_baidu = test_website_simple("https://www.baidu.com",0)
-        print("墙内延迟",con_baidu)
-        con_proxy = test_website_simple("45.76.105.14",0)
-        print("代理延迟",con_proxy)
-        con_google = test_website_simple("https://www.google.com",0)
+        con_baidu = test_website_withThread("https://www.baidu.com",0)
+        print("直连墙内延迟",con_baidu)
+        con_proxy = test_website_withThread("https://www.baidu.com",1)
+        print("代理墙内延迟",con_proxy)
+        con_google = test_website_withThread("https://www.google.com",0)
         print("直连墙外延迟",con_google)
-        con_google_withProxy = test_website_simple("https://www.google.com",1)
+        con_google_withProxy = test_website_withThread("https://www.google.com",1)
         print("代理墙外延迟",con_google_withProxy)
         print("常用网站：")
         for url in test_urls:
             print(url,":")
-            con = test_website_simple(url,0)
+            con = test_website_withThread(url,0)
             print("    直连:",con)
             if con == "∞ ms":
-                con_withProxy = test_website_simple(url,1)
+                con_withProxy = test_website_withThread(url,1)
                 print("    代理:",con_withProxy)
