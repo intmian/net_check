@@ -154,13 +154,11 @@ def test_website_withThread(url,mode):
     success_time = 0  # 成功响应
     fail_time = 0
     threads_information.clear()
-    t = threading.Thread(target=test_website_simple_start,args=(url,mode))
-    t.start()
-    t = threading.Thread(target=test_website_simple_start,args=(url,mode))
-    t.start()
-    t = threading.Thread(target=test_website_simple_start,args=(url,mode))
-    t.start()
-    while len(threads_information) < 3:
+    limit = 5
+    for i in range(limit):
+        t = threading.Thread(target=test_website_simple_start,args=(url,mode))
+        t.start()
+    while len(threads_information) < limit:
         time.sleep(0.1)  # 减少系统资源占用
         pass
     for time_ in threads_information:
