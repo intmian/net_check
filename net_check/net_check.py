@@ -1,4 +1,3 @@
-
 import pycurl
 import certifi
 import threading
