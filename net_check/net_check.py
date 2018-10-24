@@ -73,7 +73,9 @@ test_urls = ["https://www.baidu.com",
              "https://store.steampowered.com/",
              "https://www.google.com",
              "https://www.youtube.com"]
+# TODO read it by read set
 
+thread_num = 5
 
 def test_website_whole(url,mode):
     print("正在检测网站:", url)
@@ -153,13 +155,12 @@ def test_website_withThread(url,mode):
     success_time = 0  # 成功响应
     fail_time = 0
     threads_information.clear()
-    limit = 5
-    for i in range(limit):
+    for i in range(thread_num):
         t = threading.Thread(target=test_website_simple_start,args=(url,mode))
         t.start()
-    while len(threads_information) < limit:
+    while len(threads_information) < thread_num:
         time.sleep(0.1)  # 减少系统资源占用
-        pass
+        
     for time_ in threads_information:
         if time_ == -1:
             fail_time += 1
@@ -173,7 +174,7 @@ def test_website_withThread(url,mode):
         
 
 if __name__ == '__main__':
-    mode = int(input("输入1进入常用测试，输入2进入特殊测试:_\b"))
+    mode = int(input("1.常用测试,2.特殊测试,3.设置:_\b"))
     if mode == 2:
         url = input("输入网址:___________________\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b")
         clear()
@@ -191,8 +192,8 @@ if __name__ == '__main__':
         clear()
         con_baidu = test_website_withThread("https://www.baidu.com",0)
         print("直连墙内延迟",con_baidu)
-        con_proxy = test_website_withThread("https://www.baidu.com",1)
-        print("代理墙内延迟",con_proxy)
+        con_baidu_proxy = test_website_withThread("https://www.baidu.com",1)
+        print("代理墙内延迟",con_baidu_proxy)
         con_google = test_website_withThread("https://www.google.com",0)
         print("直连墙外已ban延迟",con_google)
         con_google_withProxy = test_website_withThread("https://www.google.com",1)
@@ -210,3 +211,6 @@ if __name__ == '__main__':
             if con == "∞ ms":
                 con_withProxy = test_website_withThread(url,1)
                 print("    代理:",con_withProxy)
+
+        if mode == 3:
+            pass  # setting TODO
