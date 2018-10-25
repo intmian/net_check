@@ -71,6 +71,9 @@ test_urls = None
 # TODO read it by read set
 thread_num = None
 
+work_add = None
+config_add = None
+
 def test_website_whole(url,mode):
     print("正在检测网站:", url)
     c = pycurl.Curl()
@@ -169,18 +172,18 @@ def test_website_withThread(url,mode):
 def GetSet():
     global test_urls
     global thread_num
-    with open("../config/websites.json","r",encoding='utf-8') as f:
+    with open(config_add+"\\websites.json","r",encoding='utf-8') as f:
         test_urls = json.load(f)
         print("网址已读入")
-    with open("../config/limit.json","r",encoding='utf-8') as f:
+    with open(config_add+"\\limit.json","r",encoding='utf-8') as f:
         thread_num = int(json.load(f))
         print("线程数已读入")
 
 def PushSetToFile():
-    with open("../config/websites.json","w") as f:
+    with open(config_add+"\\websites.json","w") as f:
         json.dump(test_urls,f)
         print("网址已写入设置")
-    with open("../config/limit.json","w") as f:
+    with open(config_add+"\\limit.json","w") as f:
         json.dump(thread_num,f)
         print("线程数已写入设置")
 
@@ -224,6 +227,8 @@ def Set():
 
 if __name__ == '__main__':
     clear()
+    work_add = os.getcwd()
+    config_add = work_add + "\\config"
     print("读入设置中")
     GetSet()
     clear()
