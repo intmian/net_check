@@ -6,6 +6,7 @@ import os
 import threading
 def clear():os.system('cls')
 import time
+import json
 
 threads_information = []
 dict_code = {100: "Continue",
@@ -66,16 +67,9 @@ dict_code = {100: "Continue",
              600: "Unparseable Response Headers"
              }
 
-test_urls = ["https://www.baidu.com",
-             "https://www.intmian.com",
-             "https://github.com",
-             "https://www.youku.com",
-             "https://store.steampowered.com/",
-             "https://www.google.com",
-             "https://www.youtube.com"]
+test_urls = None
 # TODO read it by read set
-
-thread_num = 5
+thread_num = None
 
 def test_website_whole(url,mode):
     print("正在检测网站:", url)
@@ -139,13 +133,13 @@ def test_website_simple(url,mode):
     except(pycurl.error):
          return -1  # 代表不能连接
     http_total_time = c.getinfo(pycurl.TOTAL_TIME)
-    http_total_time = round(http_total_time*1000,1)
+    http_total_time = round(http_total_time * 1000,1)
     http_code = c.getinfo(pycurl.HTTP_CODE)
     return  http_total_time # ms
-    #print("%s \n    直连\n    响应时间： %.2f ms\n    响应状态： %d[%s]" % (url, http_total_time * 1000,int(http_code), dict_code[http_code]))
+    #print("%s \n 直连\n 响应时间： %.2f ms\n 响应状态： %d[%s]" % (url, http_total_time *
+                               #1000,int(http_code), dict_code[http_code]))
 
-# return ∞ ms or n ms 
-
+# return ∞ ms or n ms
 def test_website_simple_start(url,mode):
     time_ = test_website_simple(url,mode)
     threads_information.append(time_)
@@ -168,13 +162,72 @@ def test_website_withThread(url,mode):
             success_time +=1 
             total_time += time_
     if success_time >= 2:
-        return str(round(total_time/success_time,1))+" ms"
+        return str(round(total_time / success_time,1)) + " ms"
     elif success_time < 2:
         return "∞ ms"
         
+def GetSet():
+    global test_urls
+    global thread_num
+    with open("../config/websites.json","r",encoding='utf-8') as f:
+        test_urls = json.load(f)
+        print("网址已读入")
+    with open("../config/limit.json","r",encoding='utf-8') as f:
+        thread_num = int(json.load(f))
+        print("线程数已读入")
+
+def PushSetToFile():
+    with open("../config/websites.json","w") as f:
+        json.dump(test_urls,f)
+        print("网址已写入设置")
+    with open("../config/limit.json","w") as f:
+        json.dump(thread_num,f)
+        print("线程数已写入设置")
+
+def showUrl():
+    print("当前网站有:")
+    for i in range(len(test_urls)):
+        print("    ",i,":",test_urls[i])
+
+def Set():
+    global thread_num
+    global test_urls
+    clear()
+    mode = int(input("1.更改测试网站\n2.更改线程数\n3.查看配置\n选择：_\b"))
+    if mode == 1:
+        while True:
+            clear()
+            showUrl()
+            mode = int(input("1.添加2.删除3.更改4.退出\n选择：_\b"))
+            if mode == 4:
+                break
+            if mode == 1:
+                newWeb = input("新的网址:__________\b\b\b\b\b\b\b\b\b\b")
+                test_urls.append(newWeb)
+            if mode == 2:
+                index = int(input("想要删除的网址"))
+                del test_urls[index]
+            if mode == 3:
+                index = int(input("想要替换的网址"))
+                newWeb = input("新的网址:__________________\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b")
+                test_urls[index] = newWeb
+    if mode == 2:
+        newNum = int(input("当前线程数为：%d\n更改为：_\b"%thread_num))
+        thread_num = newNum
+    if mode == 3:
+        clear()
+        showUrl()
+        print("--------------------\n当前线程数：",thread_num)
+        return
+    clear()
+    PushSetToFile()
 
 if __name__ == '__main__':
-    mode = int(input("1.常用测试,2.特殊测试,3.设置:_\b"))
+    clear()
+    print("读入设置中")
+    GetSet()
+    clear()
+    mode = int(input("1.常用测试\n2.特殊测试\n3.设置\n选择：_\b"))
     if mode == 2:
         url = input("输入网址:___________________\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b")
         clear()
@@ -212,5 +265,5 @@ if __name__ == '__main__':
                 con_withProxy = test_website_withThread(url,1)
                 print("    代理:",con_withProxy)
 
-        if mode == 3:
-            pass  # setting TODO
+    if mode == 3:
+        Set()
