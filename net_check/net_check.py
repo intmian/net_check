@@ -7,6 +7,7 @@ import threading
 def clear():os.system('cls')
 import time
 import json
+import sys
 
 threads_information = []
 dict_code = {100: "Continue",
@@ -227,7 +228,8 @@ def Set():
 
 if __name__ == '__main__':
     clear()
-    work_add = os.getcwd()
+    work_add = sys.argv[0]
+    work_add = work_add.replace("\\net_check.py","")
     config_add = work_add + "\\config"
     print("读入设置中")
     GetSet()
