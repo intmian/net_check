@@ -71,7 +71,7 @@ dict_code = {100: "Continue",
 test_urls = None
 # TODO read it by read set
 thread_num = None
-
+port = None
 work_add = None
 config_add = None
 
@@ -80,7 +80,7 @@ def test_website_whole(url,mode):
     c = pycurl.Curl()
     buffer = BytesIO()  # 创建缓存对象
     if mode == 1:
-       c.setopt(c.PROXY, '127.0.0.1:2333')
+       c.setopt(c.PROXY, '127.0.0.1:' + port)
     c.setopt(pycurl.CONNECTTIMEOUT, 10)
     c.setopt(pycurl.TIMEOUT, 15)
     c.setopt(c.WRITEDATA, buffer)  # 设置资源数据写入到缓存对象
@@ -126,7 +126,7 @@ def test_website_simple(url,mode):
     c.setopt(c.WRITEDATA, buffer)  # 设置资源数据写入到缓存对象
     c.setopt(c.URL, url)  # 指定请求的URL
     if mode == 1:
-       c.setopt(c.PROXY, '127.0.0.1:2333')    
+       c.setopt(c.PROXY, '127.0.0.1:' + port)    
     c.setopt(c.MAXREDIRS, 5)  # 指定HTTP重定向的最大数
     c.setopt(pycurl.FORBID_REUSE, 1)
     c.setopt(pycurl.SSL_VERIFYPEER, 1)
@@ -173,11 +173,15 @@ def test_website_withThread(url,mode):
 def GetSet():
     global test_urls
     global thread_num
+    global port
     with open(config_add+"\\websites.json","r",encoding='utf-8') as f:
         test_urls = json.load(f)
         print("网址已读入")
     with open(config_add+"\\limit.json","r",encoding='utf-8') as f:
         thread_num = int(json.load(f))
+        print("线程数已读入")
+    with open(config_add+"\\port.json","r",encoding='utf-8') as f:
+        port = json.load(f)
         print("线程数已读入")
 
 def PushSetToFile():
@@ -187,6 +191,10 @@ def PushSetToFile():
     with open(config_add+"\\limit.json","w") as f:
         json.dump(thread_num,f)
         print("线程数已写入设置")
+    with open(config_add+"\\port,json","w+") as f:
+        json.dump(port,f)
+        print("端口已写入设置")
+#写入配置至文件
 
 def showUrl():
     print("当前网站有:")
@@ -197,7 +205,7 @@ def Set():
     global thread_num
     global test_urls
     clear()
-    mode = int(input("1.更改测试网站\n2.更改线程数\n3.查看配置\n选择：_\b"))
+    mode = int(input("1.更改测试网站\n2.更改线程数\n3.更改端口\n4.查看配置\n选择：_\b"))
     if mode == 1:
         while True:
             clear()
@@ -219,9 +227,13 @@ def Set():
         newNum = int(input("当前线程数为：%d\n更改为：_\b"%thread_num))
         thread_num = newNum
     if mode == 3:
+        newPort = input("当前线程数为：%d\n更改为：_\b"%thread_num)
+        port = newPort
+    if mode == 4:
         clear()
         showUrl()
-        print("--------------------\n当前线程数：",thread_num)
+        print("--------------------\n当前线程数：", thread_num)
+        print("--------------------\n当前端口：", port)
         return
     clear()
     PushSetToFile()
