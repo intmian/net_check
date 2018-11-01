@@ -181,7 +181,7 @@ def GetSet():
         thread_num = int(json.load(f))
         print("线程数已读入")
     with open(config_add+"\\port.json","r",encoding='utf-8') as f:
-        port = json.load(f)
+        port = str(json.load(f))
         print("线程数已读入")
 
 def PushSetToFile():
@@ -191,7 +191,7 @@ def PushSetToFile():
     with open(config_add+"\\limit.json","w") as f:
         json.dump(thread_num,f)
         print("线程数已写入设置")
-    with open(config_add+"\\port,json","w+") as f:
+    with open(config_add+"\\port.json","w+") as f:
         json.dump(port,f)
         print("端口已写入设置")
 #写入配置至文件
@@ -227,7 +227,7 @@ def Set():
         newNum = int(input("当前线程数为：%d\n更改为：_\b"%thread_num))
         thread_num = newNum
     if mode == 3:
-        newPort = input("当前线程数为：%d\n更改为：_\b"%thread_num)
+        newPort = input("当前端口为：%d\n更改为：_\b"%thread_num)
         port = newPort
     if mode == 4:
         clear()
