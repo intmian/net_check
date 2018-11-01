@@ -227,7 +227,7 @@ def Set():
         newNum = int(input("当前线程数为：%d\n更改为：_\b"%thread_num))
         thread_num = newNum
     if mode == 3:
-        newPort = input("当前端口为：%d\n更改为：_\b"%thread_num)
+        newPort = input("当前端口为：%d\n更改为：_\b"%port)
         port = newPort
     if mode == 4:
         clear()
