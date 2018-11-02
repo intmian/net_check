@@ -204,6 +204,7 @@ def showUrl():
 def Set():
     global thread_num
     global test_urls
+    global port
     clear()
     mode = int(input("1.更改测试网站\n2.更改线程数\n3.更改端口\n4.查看配置\n选择：_\b"))
     if mode == 1:
