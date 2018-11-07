@@ -75,6 +75,7 @@ port = None
 work_add = None
 config_add = None
 
+
 def test_website_whole(url,mode):
     print("正在检测网站:", url)
     c = pycurl.Curl()
@@ -174,28 +175,27 @@ def GetSet():
     global test_urls
     global thread_num
     global port
-    with open(config_add+"\\websites.json","r",encoding='utf-8') as f:
+    with open(config_add + "\\websites.json","r",encoding='utf-8') as f:
         test_urls = json.load(f)
         print("网址已读入")
-    with open(config_add+"\\limit.json","r",encoding='utf-8') as f:
+    with open(config_add + "\\limit.json","r",encoding='utf-8') as f:
         thread_num = int(json.load(f))
         print("线程数已读入")
-    with open(config_add+"\\port.json","r",encoding='utf-8') as f:
+    with open(config_add + "\\port.json","r",encoding='utf-8') as f:
         port = str(json.load(f))
         print("线程数已读入")
 
 def PushSetToFile():
-    with open(config_add+"\\websites.json","w") as f:
+    with open(config_add + "\\websites.json","w") as f:
         json.dump(test_urls,f)
         print("网址已写入设置")
-    with open(config_add+"\\limit.json","w") as f:
+    with open(config_add + "\\limit.json","w") as f:
         json.dump(thread_num,f)
         print("线程数已写入设置")
-    with open(config_add+"\\port.json","w+") as f:
+    with open(config_add + "\\port.json","w+") as f:
         json.dump(port,f)
         print("端口已写入设置")
 #写入配置至文件
-
 def showUrl():
     print("当前网站有:")
     for i in range(len(test_urls)):
@@ -225,10 +225,10 @@ def Set():
                 newWeb = input("新的网址:__________________\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b")
                 test_urls[index] = newWeb
     if mode == 2:
-        newNum = int(input("当前线程数为：%d\n更改为：_\b"%thread_num))
+        newNum = int(input("当前线程数为：%d\n更改为：_\b" % thread_num))
         thread_num = newNum
     if mode == 3:
-        newPort = input("当前端口为：%d\n更改为：_\b"%port)
+        newPort = input("当前端口为：%d\n更改为：_\b" % port)
         port = newPort
     if mode == 4:
         clear()
@@ -242,7 +242,6 @@ def Set():
 if __name__ == '__main__':
     clear()
     work_add = sys.argv[0]
-    work_add = work_add.replace("\\net_check.py","")
     index = None
     for i in range(len(work_add))[::-1]:
         if work_add[i] == '\\':
