@@ -8,6 +8,8 @@ def clear():os.system('cls')
 import time
 import json
 import sys
+import shutil
+
 
 threads_information = []
 dict_code = {100: "Continue",
@@ -74,6 +76,16 @@ thread_num = None
 port = None
 work_add = None
 config_add = None
+test_urls_default = ["https://www.baidu.com", 
+    "https://www.intmian.com", 
+    "https://github.com", 
+    "https://www.youku.com", 
+    "https://store.steampowered.com/", 
+    "https://www.google.com", 
+    "https://www.youtube.com"]
+port_default = 1060
+thread_num_default = 5
+
 
 
 def test_website_whole(url,mode):
@@ -206,7 +218,7 @@ def Set():
     global test_urls
     global port
     clear()
-    mode = int(input("1.更改测试网站\n2.更改线程数\n3.更改端口\n4.设置\n选择：_\b"))
+    mode = int(input("1.更改测试网站\n2.更改线程数\n3.更改端口\n4.显示当前配置\n5.初始化配置\n选择：_\b"))
     if mode == 1:
         while True:
             clear()
@@ -236,8 +248,56 @@ def Set():
         print("--------------------\n当前线程数：", thread_num)
         print("--------------------\n当前端口：", port)
         return
+    if mode == 5:
+        sure = input("你确定吗，确定就输入YES")
+        if sure == "YES":
+            DeleteFile(True,config_add)
+            PushDefaultSetToFile(config_add)
+            print("初始化成功")
+            clear()
+            return
     clear()
     PushSetToFile()
+
+def DeleteFile(ifDeleteAll,config_add):  # 参数代表了删非空还是删空文件夹
+    if ifDeleteAll:
+        shutil.rmtree(config_add)
+    else:
+        os.removedirs(config_add)
+
+def PushDefaultSetToFile(config_add):
+    os.makedirs(config_add)
+    print("文件夹已建立")
+    with open(config_add + "\\websites.json","w") as f:
+        json.dump(test_urls_default,f)
+        print("网址已写入设置")
+    with open(config_add + "\\limit.json","w") as f:
+        json.dump(thread_num_default,f)
+        print("线程数已写入设置")
+    with open(config_add + "\\port.json","w+") as f:
+        json.dump(port_default,f)
+        print("端口已写入设置")
+
+def JudgeIfSettingExist(config_add):
+    if not os.path.exists(config_add):
+        print("配置文件夹不存在，将启动修复")
+        PushDefaultSetToFile(config_add)
+        print("修复已结束")
+        return
+
+    port_add = config_add + "\\port.json"
+    limit_add = config_add + "\\limit.json"
+    website_add = config_add + "\\websites.json"
+
+    if not (os.path.exists(port_add) and os.path.exists(limit_add) and os.path.exists(website_add)):
+        print("配置文件损坏，是否启动修复（修复后自定义配置将丢失，可至配置文件夹的json文件中进行备份）")
+        mode = input("YES/NO?")
+        if(mode == "YES"):
+            DeleteFile(True,config_add)
+            PushDefaultSetToFile(config_add)
+            return
+        else:
+            exit(0)
 
 if __name__ == '__main__':
     clear()
@@ -249,6 +309,11 @@ if __name__ == '__main__':
             break
     work_add = work_add[0:i]
     config_add = work_add + "\\config"
+
+    print("验证文件中")
+    JudgeIfSettingExist(config_add)
+    print("验证文件结束")
+
     print("读入设置中")
     GetSet()
     clear()
