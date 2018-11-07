@@ -287,3 +287,4 @@ if __name__ == '__main__':
 
     if mode == 3:
         Set()
+    os.system("pause")
