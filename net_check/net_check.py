@@ -206,7 +206,7 @@ def Set():
     global test_urls
     global port
     clear()
-    mode = int(input("1.更改测试网站\n2.更改线程数\n3.更改端口\n4.查看配置\n选择：_\b"))
+    mode = int(input("1.更改测试网站\n2.更改线程数\n3.更改端口\n4.设置\n选择：_\b"))
     if mode == 1:
         while True:
             clear()
@@ -243,6 +243,12 @@ if __name__ == '__main__':
     clear()
     work_add = sys.argv[0]
     work_add = work_add.replace("\\net_check.py","")
+    index = None
+    for i in range(len(work_add))[::-1]:
+        if work_add[i] == '\\':
+            index = i
+            break
+    work_add = work_add[0:i]
     config_add = work_add + "\\config"
     print("读入设置中")
     GetSet()
