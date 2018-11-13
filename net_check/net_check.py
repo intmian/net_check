@@ -9,7 +9,10 @@ import json
 import sys
 import shutil
 
-def clear():os.system('cls')
+
+def clear(): os.system('cls')
+
+
 threads_information = []
 dict_code = {
     100: "Continue",
@@ -68,33 +71,31 @@ dict_code = {
     509: "Bandwidth Limit Exceeded",
     510: "Not Extended",
     600: "Unparseable Response Headers"
-    }
+}
 
 test_urls = None
-# TODO read it by read set
 thread_num = None
 port = None
 work_add = None
 config_add = None
 
-test_urls_default = ["https://www.baidu.com", 
-    "https://www.intmian.com", 
-    "https://github.com", 
-    "https://www.youku.com", 
-    "https://store.steampowered.com/", 
-    "https://www.google.com", 
-    "https://www.youtube.com"]
+test_urls_default = ["https://www.baidu.com",
+                     "https://www.intmian.com",
+                     "https://github.com",
+                     "https://www.youku.com",
+                     "https://store.steampowered.com/",
+                     "https://www.google.com",
+                     "https://www.youtube.com"]
 port_default = 1060
 thread_num_default = 5
 
 
-
-def test_website_whole(url,mode):
+def test_website_whole(url, mode):
     print("正在检测网站:", url)
     c = pycurl.Curl()
     buffer = BytesIO()  # 创建缓存对象
     if mode == 1:
-       c.setopt(c.PROXY, '127.0.0.1:' + port)
+        c.setopt(c.PROXY, '127.0.0.1:' + port)
     c.setopt(pycurl.CONNECTTIMEOUT, 10)
     c.setopt(pycurl.TIMEOUT, 15)
     c.setopt(c.WRITEDATA, buffer)  # 设置资源数据写入到缓存对象
@@ -132,7 +133,8 @@ def test_website_whole(url,mode):
     print("平均上传速度： %d kb/s" % (http_speed_upload / 1024))
     print("平均下载速度： %d kb/s" % (http_speed_downlaod / 1024))
 
-def test_website_simple(url,mode):
+
+def test_website_simple(url, mode):
     c = pycurl.Curl()
     buffer = BytesIO()  # 创建缓存对象
     c.setopt(pycurl.CONNECTTIMEOUT, 10)
@@ -140,7 +142,7 @@ def test_website_simple(url,mode):
     c.setopt(c.WRITEDATA, buffer)  # 设置资源数据写入到缓存对象
     c.setopt(c.URL, url)  # 指定请求的URL
     if mode == 1:
-       c.setopt(c.PROXY, '127.0.0.1:' + port)    
+        c.setopt(c.PROXY, '127.0.0.1:' + port)
     c.setopt(c.MAXREDIRS, 5)  # 指定HTTP重定向的最大数
     c.setopt(pycurl.FORBID_REUSE, 1)
     c.setopt(pycurl.SSL_VERIFYPEER, 1)
@@ -149,59 +151,63 @@ def test_website_simple(url,mode):
     try:
         c.perform()  # 执行
     except(pycurl.error):
-         return -1  # 代表不能连接
+        return -1  # 代表不能连接
     http_total_time = c.getinfo(pycurl.TOTAL_TIME)
-    http_total_time = round(http_total_time * 1000,1)
+    http_total_time = round(http_total_time * 1000, 1)
     http_code = c.getinfo(pycurl.HTTP_CODE)
-    return  http_total_time # ms
-    #print("%s \n 直连\n 响应时间： %.2f ms\n 响应状态： %d[%s]" % (url, http_total_time *
-                               #1000,int(http_code), dict_code[http_code]))
+    return http_total_time  # ms
+    # print("%s \n 直连\n 响应时间： %.2f ms\n 响应状态： %d[%s]" % (url, http_total_time *
+    # 1000,int(http_code), dict_code[http_code]))
+
 
 # return ∞ ms or n ms
-def test_website_simple_start(url,mode):
-    time_ = test_website_simple(url,mode)
+def test_website_simple_start(url, mode):
+    time_ = test_website_simple(url, mode)
     threads_information.append(time_)
 
-def test_website_withThread(url,mode):
+
+def test_website_withThread(url, mode):
     total_time = 0
     success_time = 0  # 成功响应
     fail_time = 0
     threads_information.clear()
     for i in range(thread_num):
-        t = threading.Thread(target=test_website_simple_start,args=(url,mode))
+        t = threading.Thread(target=test_website_simple_start, args=(url, mode))
         t.start()
     while len(threads_information) < thread_num:
         time.sleep(0.1)  # 减少系统资源占用
-        
+
     for time_ in threads_information:
         if time_ == -1:
             fail_time += 1
         else:
-            success_time +=1 
+            success_time += 1
             total_time += time_
     if success_time >= 2:
-        return str(round(total_time / success_time,1)) + " ms"
+        return str(round(total_time / success_time, 1)) + " ms"
     elif success_time < 2:
         return "∞ ms"
-        
+
+
 def GetSet():
     global test_urls
     global thread_num
     global port
-    with open(config_add + "\\websites.json","r",encoding='utf-8') as f:
+    with open(config_add + "\\websites.json", "r", encoding='utf-8') as f:
         test_urls = json.load(f)
         print("网址已读入")
-    with open(config_add + "\\limit.json","r",encoding='utf-8') as f:
+    with open(config_add + "\\limit.json", "r", encoding='utf-8') as f:
         thread_num = int(json.load(f))
         print("线程数已读入")
-    with open(config_add + "\\port.json","r",encoding='utf-8') as f:
+    with open(config_add + "\\port.json", "r", encoding='utf-8') as f:
         port = str(json.load(f))
         print("线程数已读入")
 
+
 def TestWebSetForTime(time_divide):  # 接受time_divide作为间隔时间，类型：int
-    
     # TODO
     pass
+
 
 def TestWebSetForTimeOut():  # 外部接口
     second = input("请输入两次测试的间隔时间")
@@ -215,20 +221,23 @@ def TestWebSetForTimeOut():  # 外部接口
 
 
 def PushSetToFile():
-    with open(config_add + "\\websites.json","w") as f:
-        json.dump(test_urls,f)
+    with open(config_add + "\\websites.json", "w") as f:
+        json.dump(test_urls, f)
         print("网址已写入设置")
-    with open(config_add + "\\limit.json","w") as f:
-        json.dump(thread_num,f)
+    with open(config_add + "\\limit.json", "w") as f:
+        json.dump(thread_num, f)
         print("线程数已写入设置")
-    with open(config_add + "\\port.json","w+") as f:
-        json.dump(port,f)
+    with open(config_add + "\\port.json", "w+") as f:
+        json.dump(port, f)
         print("端口已写入设置")
-#写入配置至文件
+
+
+# 写入配置至文件
 def showUrl():
     print("当前网站有:")
     for i in range(len(test_urls)):
-        print("    ",i,":",test_urls[i])
+        print("    ", i, ":", test_urls[i])
+
 
 def Set():
     global thread_num
@@ -268,7 +277,7 @@ def Set():
     if mode == 5:
         sure = input("你确定吗，确定就输入YES")
         if sure == "YES":
-            DeleteFile(True,config_add)
+            DeleteFile(True, config_add)
             PushDefaultSetToFile(config_add)
             print("初始化成功")
             clear()
@@ -276,24 +285,27 @@ def Set():
     clear()
     PushSetToFile()
 
-def DeleteFile(ifDeleteAll,config_add):  # 参数代表了删非空还是删空文件夹
+
+def DeleteFile(ifDeleteAll, config_add):  # 参数代表了删非空还是删空文件夹
     if ifDeleteAll:
         shutil.rmtree(config_add)
     else:
         os.removedirs(config_add)
 
+
 def PushDefaultSetToFile(config_add):
     os.makedirs(config_add)
     print("文件夹已建立")
-    with open(config_add + "\\websites.json","w") as f:
-        json.dump(test_urls_default,f)
+    with open(config_add + "\\websites.json", "w") as f:
+        json.dump(test_urls_default, f)
         print("网址已写入设置")
-    with open(config_add + "\\limit.json","w") as f:
-        json.dump(thread_num_default,f)
+    with open(config_add + "\\limit.json", "w") as f:
+        json.dump(thread_num_default, f)
         print("线程数已写入设置")
-    with open(config_add + "\\port.json","w+") as f:
-        json.dump(port_default,f)
+    with open(config_add + "\\port.json", "w+") as f:
+        json.dump(port_default, f)
         print("端口已写入设置")
+
 
 def JudgeIfSettingExist(config_add):
     if not os.path.exists(config_add):
@@ -309,14 +321,15 @@ def JudgeIfSettingExist(config_add):
     if not (os.path.exists(port_add) and os.path.exists(limit_add) and os.path.exists(website_add)):
         print("配置文件损坏，是否启动修复（修复后自定义配置将丢失，可至配置文件夹的json文件中进行备份）")
         mode = input("YES/NO?")
-        if(mode == "YES"):
-            DeleteFile(True,config_add)
+        if (mode == "YES"):
+            DeleteFile(True, config_add)
             PushDefaultSetToFile(config_add)
             return
         else:
             exit(0)
 
-if __name__ == '__main__':
+
+def main():
     clear()
     work_add = sys.argv[0]
     index = None
@@ -340,38 +353,41 @@ if __name__ == '__main__':
         clear()
         try:
             print("正在尝试直连")
-            test_website_whole(url,0)
+            test_website_whole(url, 0)
         except(pycurl.error):
             print("%s\n链接超时" % (url))
             print("正在尝试通过代理")
             try:
-                test_website_whole(url,1)
+                test_website_whole(url, 1)
             except(pycurl.error):
                 print("连接失败")
     if mode == 1:
         clear()
-        con_baidu = test_website_withThread("https://www.baidu.com",0)
-        print("直连墙内延迟",con_baidu)
-        con_baidu_proxy = test_website_withThread("https://www.baidu.com",1)
-        print("代理墙内延迟",con_baidu_proxy)
-        con_google = test_website_withThread("https://www.google.com",0)
-        print("直连墙外已ban延迟",con_google)
-        con_google_withProxy = test_website_withThread("https://www.google.com",1)
-        print("代理墙外已ban延迟",con_google_withProxy)
-        con_google = test_website_withThread("https://www.wikipedia.org/",0)
-        print("直连墙外未ban延迟",con_google)
-        con_google_withProxy = test_website_withThread("https://www.wikipedia.org/",1)
-        print("代理墙外未ban延迟",con_google_withProxy)
+        con_baidu = test_website_withThread("https://www.baidu.com", 0)
+        print("直连墙内延迟", con_baidu)
+        con_baidu_proxy = test_website_withThread("https://www.baidu.com", 1)
+        print("代理墙内延迟", con_baidu_proxy)
+        con_google = test_website_withThread("https://www.google.com", 0)
+        print("直连墙外已ban延迟", con_google)
+        con_google_withProxy = test_website_withThread("https://www.google.com", 1)
+        print("代理墙外已ban延迟", con_google_withProxy)
+        con_google = test_website_withThread("https://www.wikipedia.org/", 0)
+        print("直连墙外未ban延迟", con_google)
+        con_google_withProxy = test_website_withThread("https://www.wikipedia.org/", 1)
+        print("代理墙外未ban延迟", con_google_withProxy)
 
         print("常用网站：")
         for url in test_urls:
-            print(url,":")
-            con = test_website_withThread(url,0)
-            print("    直连:",con)
+            print(url, ":")
+            con = test_website_withThread(url, 0)
+            print("    直连:", con)
             if con == "∞ ms":
-                con_withProxy = test_website_withThread(url,1)
-                print("    代理:",con_withProxy)
+                con_withProxy = test_website_withThread(url, 1)
+                print("    代理:", con_withProxy)
 
     if mode == 3:
         Set()
     os.system("pause")
+
+if __name__ == '__main__':
+    main()
