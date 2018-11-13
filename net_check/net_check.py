@@ -154,7 +154,7 @@ def test_website_simple(url, mode):
         return -1  # 代表不能连接
     http_total_time = c.getinfo(pycurl.TOTAL_TIME)
     http_total_time = round(http_total_time * 1000, 1)
-    http_code = c.getinfo(pycurl.HTTP_CODE)
+    # http_code = c.getinfo(pycurl.HTTP_CODE) # 忘记掉这句啥用了 先砍掉吧。。
     return http_total_time  # ms
     # print("%s \n 直连\n 响应时间： %.2f ms\n 响应状态： %d[%s]" % (url, http_total_time *
     # 1000,int(http_code), dict_code[http_code]))
@@ -204,9 +204,49 @@ def GetSet():
         print("线程数已读入")
 
 
-def TestWebSetForTime(time_divide):  # 接受time_divide作为间隔时间，类型：int
-    # TODO
-    pass
+def TestWebSetReturnTimeAndCode(url,ifUseSs):  # 第一项时间 第二项状态
+    c = pycurl.Curl()
+    buffer = BytesIO()  # 创建缓存对象
+    c.setopt(pycurl.CONNECTTIMEOUT, 10)
+    c.setopt(pycurl.TIMEOUT, 15)
+    c.setopt(c.WRITEDATA, buffer)  # 设置资源数据写入到缓存对象
+    c.setopt(c.URL, url)  # 指定请求的URL
+    if ifUseSs:
+        c.setopt(c.PROXY, '127.0.0.1:' + port)
+    c.setopt(c.MAXREDIRS, 5)  # 指定HTTP重定向的最大数
+    c.setopt(pycurl.FORBID_REUSE, 1)
+    c.setopt(pycurl.SSL_VERIFYPEER, 1)
+    c.setopt(pycurl.SSL_VERIFYHOST, 2)
+    c.setopt(pycurl.CAINFO, certifi.where())
+    try:
+        c.perform()  # 执行
+    except(pycurl.error):
+        return [-1,404]  # 代表不能连接
+    http_total_time = c.getinfo(pycurl.TOTAL_TIME)
+    http_total_time = round(http_total_time * 1000, 1)
+    http_code = c.getinfo(pycurl.HTTP_CODE)
+    return [http_total_time,http_code]
+
+
+def TestWebSetForTime(time_divide,ifUseProxy):  # 接受time_divide作为间隔时间，类型：int，单位：秒
+    ifRun = True
+    while True:
+        timNow = time.strftime('%H:%M:%S', time.localtime(time.time()))
+
+        status = TestWebSetReturnTimeAndCode("https://www.baidu.com",False)
+        time = status[0]
+        code = status[1]
+        if ifUseProxy:
+            pStatus = TestWebSetReturnTimeAndCode("https://www.baidu.com",True)
+            pTime = pStatus[0]
+            pCode = pStatus[1]
+
+        if time == "-1":  # TODO: complete
+
+
+    # FIXME
+    # TODO 写入文件
+
 
 
 def TestWebSetForTimeOut():  # 外部接口
@@ -217,7 +257,7 @@ def TestWebSetForTimeOut():  # 外部接口
     clear()
     print("测试开始")
     TestWebSetForTime(int(second))
-    # TODO
+    # TODO add to main
 
 
 def PushSetToFile():
