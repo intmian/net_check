@@ -204,7 +204,7 @@ def GetSet():
         print("线程数已读入")
 
 
-def TestWebSetReturnTimeAndCode(url,ifUseSs):  # 第一项时间 第二项状态
+def TestWebSetReturnTimeAndCode(url, ifUseSs):  # 第一项时间 第二项状态
     c = pycurl.Curl()
     buffer = BytesIO()  # 创建缓存对象
     c.setopt(pycurl.CONNECTTIMEOUT, 10)
@@ -221,32 +221,31 @@ def TestWebSetReturnTimeAndCode(url,ifUseSs):  # 第一项时间 第二项状态
     try:
         c.perform()  # 执行
     except(pycurl.error):
-        return [-1,404]  # 代表不能连接
+        return [-1, 404]  # 代表不能连接
     http_total_time = c.getinfo(pycurl.TOTAL_TIME)
     http_total_time = round(http_total_time * 1000, 1)
     http_code = c.getinfo(pycurl.HTTP_CODE)
-    return [http_total_time,http_code]
+    return [http_total_time, http_code]
 
 
-def TestWebSetForTime(time_divide,ifUseProxy):  # 接受time_divide作为间隔时间，类型：int，单位：秒
+def TestWebSetForTime(time_divide, ifUseProxy):  # 接受time_divide作为间隔时间，类型：int，单位：秒
     ifRun = True
     while True:
         timNow = time.strftime('%H:%M:%S', time.localtime(time.time()))
 
-        status = TestWebSetReturnTimeAndCode("https://www.baidu.com",False)
+        status = TestWebSetReturnTimeAndCode("https://www.baidu.com", False)
         time = status[0]
         code = status[1]
         if ifUseProxy:
-            pStatus = TestWebSetReturnTimeAndCode("https://www.baidu.com",True)
+            pStatus = TestWebSetReturnTimeAndCode("https://www.baidu.com", True)
             pTime = pStatus[0]
             pCode = pStatus[1]
 
-        if time == "-1":  # TODO: complete
-
+        if time == "-1":
+            pass# TODO: complete
 
     # FIXME
     # TODO 写入文件
-
 
 
 def TestWebSetForTimeOut():  # 外部接口
@@ -370,6 +369,7 @@ def JudgeIfSettingExist(config_add):
 
 
 def main():
+    # TODO : test before start
     clear()
     work_add = sys.argv[0]
     index = None
@@ -403,6 +403,7 @@ def main():
                 print("连接失败")
     if mode == 1:
         clear()
+        print("测试开始")
         con_baidu = test_website_withThread("https://www.baidu.com", 0)
         print("直连墙内延迟", con_baidu)
         con_baidu_proxy = test_website_withThread("https://www.baidu.com", 1)
@@ -428,6 +429,7 @@ def main():
     if mode == 3:
         Set()
     os.system("pause")
+
 
 if __name__ == '__main__':
     main()
