@@ -288,16 +288,16 @@ def Set():
         while True:
             clear()
             showUrl()
-            mode = int(input("1.添加2.删除3.更改4.退出\n选择：_\b"))
-            if mode == 4:
+            wmode = int(input("1.添加2.删除3.更改4.退出\n选择：_\b"))
+            if wmode == 4:
                 break
-            if mode == 1:
+            if wmode == 1:
                 newWeb = input("新的网址:__________\b\b\b\b\b\b\b\b\b\b")
                 test_urls.append(newWeb)
-            if mode == 2:
+            if wmode == 2:
                 index = int(input("想要删除的网址"))
                 del test_urls[index]
-            if mode == 3:
+            if wmode == 3:
                 index = int(input("想要替换的网址"))
                 newWeb = input("新的网址:__________________\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b")
                 test_urls[index] = newWeb
